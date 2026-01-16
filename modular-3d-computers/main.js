@@ -3,7 +3,7 @@ const container = canvas.parentElement;
 
 /* SCENE */
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0b0d12);
+scene.background = null;
 
 /* CAMERA */
 const camera = new THREE.PerspectiveCamera(
@@ -21,23 +21,30 @@ const renderer = new THREE.WebGLRenderer({
   alpha: true
 });
 renderer.setSize(container.clientWidth, container.clientHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
 
 /* LIGHTS */
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-scene.add(ambientLight);
+scene.add(new THREE.AmbientLight(0xffffff, 0.35));
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-directionalLight.position.set(5, 10, 5);
-directionalLight.castShadow = true;
-scene.add(directionalLight);
+const keyLight = new THREE.DirectionalLight(0xffffff, 1);
+keyLight.position.set(5, 8, 5);
+keyLight.castShadow = true;
+scene.add(keyLight);
 
-/* GROUND PLANE for shadow */
-const groundGeo = new THREE.PlaneGeometry(10, 10);
-const groundMat = new THREE.ShadowMaterial({ opacity: 0.15 });
-const ground = new THREE.Mesh(groundGeo, groundMat);
+const rimLight = new THREE.DirectionalLight(0xffffff, 0.4);
+rimLight.position.set(-5, 4, -4);
+scene.add(rimLight);
+
+/* GROUND (shadow catcher) */
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(10, 10),
+  new THREE.ShadowMaterial({ opacity: 0.15 })
+);
 ground.rotation.x = -Math.PI / 2;
 ground.position.y = -1.5;
 ground.receiveShadow = true;
@@ -45,42 +52,41 @@ scene.add(ground);
 
 /* LOGO */
 let logo;
-let logoGroup;
 const loader = new THREE.TextureLoader();
 
-loader.load(
-  "assets/co-designs-logo.png",
-  (texture) => {
-    const material = new THREE.MeshStandardMaterial({
-      map: texture,
-      transparent: true,
-      roughness: 0.2,
-      metalness: 0.6,
-      emissive: new THREE.Color(0x00eaff),
-      emissiveIntensity: 0.5
-    });
+loader.load("assets/co-designs-logo.png", (texture) => {
+  texture.colorSpace = THREE.SRGBColorSpace;
 
-    const aspect = texture.image.width / texture.image.height;
-    logoGroup = new THREE.Group();
+  const material = new THREE.MeshStandardMaterial({
+    map: texture,
+    transparent: true,
+    color: 0x000000,
+    roughness: 0.35,
+    metalness: 0.25
+  });
 
-    for (let i = 0; i < 7; i++) {
-      const geometry = new THREE.PlaneGeometry(3, 3 / aspect);
-      const mesh = new THREE.Mesh(geometry, material);
-      mesh.position.z = i * -0.06; // more subtle depth layering
-      mesh.castShadow = true;
-      logoGroup.add(mesh);
-    }
+  const aspect = texture.image.width / texture.image.height;
+  logo = new THREE.Group();
 
-    logo = logoGroup;
-    logo.position.y = 0;
-    scene.add(logo);
-  },
-  undefined,
-  (error) => console.error("Logo failed to load", error)
-);
+  for (let i = 0; i < 7; i++) {
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(3, 3 / aspect),
+      material.clone()
+    );
+    mesh.position.z = -i * 0.06;
+    mesh.castShadow = true;
+    logo.add(mesh);
+  }
+
+  scene.add(logo);
+});
 
 /* ANIMATION */
 let time = 0;
+let mouseX = 0;
+let mouseY = 0;
+let targetX = 0;
+let targetY = 0;
 
 function animate() {
   requestAnimationFrame(animate);
@@ -88,21 +94,19 @@ function animate() {
   if (logo) {
     time += 0.01;
 
-    // Floating up/down with soft sine waves
-    logo.position.y = Math.sin(time * 1.2) * 0.35 + Math.sin(time * 0.3) * 0.05;
+    logo.position.y = Math.sin(time * 1.1) * 0.35;
 
-    // Smooth spinning rotation
-    logo.rotation.y += 0.015;
-    logo.rotation.x = Math.sin(time * 0.8) * 0.15 + Math.sin(time * 0.4) * 0.05;
-    logo.rotation.z = Math.sin(time * 0.2) * 0.03;
+    mouseX += (targetX - mouseX) * 0.06;
+    mouseY += (targetY - mouseY) * 0.06;
 
-    // Breathing scale effect
-    const scale = 1 + Math.sin(time * 1.7) * 0.035;
-    logo.scale.set(scale, scale, scale);
+    logo.rotation.y = mouseX + time * 0.15;
+    logo.rotation.x = mouseY + Math.sin(time * 0.6) * 0.1;
 
-    // Emissive pulse glow
+    const scale = 1 + Math.sin(time * 1.6) * 0.03;
+    logo.scale.setScalar(scale);
+
     logo.children.forEach((mesh, i) => {
-      mesh.material.emissiveIntensity = 0.3 + Math.sin(time * 2 + i) * 0.1;
+      mesh.position.z = -i * 0.06 + Math.sin(time + i) * 0.006;
     });
   }
 
@@ -111,22 +115,16 @@ function animate() {
 
 animate();
 
-/* MOUSE PARALLAX */
+/* MOUSE */
 document.addEventListener("mousemove", (e) => {
-  if (!logo) return;
-
-  const x = (e.clientX / window.innerWidth - 0.5) * 0.5;
-  const y = (e.clientY / window.innerHeight - 0.5) * 0.35;
-
-  logo.rotation.y += (x - logo.rotation.y) * 0.08;
-  logo.rotation.x += (y - logo.rotation.x) * 0.08;
+  targetX = (e.clientX / window.innerWidth - 0.5) * 0.5;
+  targetY = (e.clientY / window.innerHeight - 0.5) * 0.35;
 });
 
 /* RESIZE */
 window.addEventListener("resize", () => {
   const w = container.clientWidth;
   const h = container.clientHeight;
-
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
   renderer.setSize(w, h);

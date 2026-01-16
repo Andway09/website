@@ -2,74 +2,108 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>C.O designs | Architectural Design Services</title>
+  <title>C.O designs | Architectural Design Studio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
+<!-- NAVBAR -->
+<header class="nav">
+  <div class="nav-inner">
+    <div class="logo">C.O designs</div>
+    <nav>
+      <a href="#services">Services</a>
+      <a href="#projects">Projects</a>
+      <a href="#about">About</a>
+      <button class="nav-cta">Free Consultation</button>
+    </nav>
+  </div>
+</header>
+
 <!-- HERO -->
 <section class="hero grid">
   <div class="hero-text">
-    <h1>C.O designs</h1>
-    <p>Architectural Design • Space Planning • Modern Structures</p>
-    <button>View Projects</button>
+    <div class="hero-rating">★★★★★ <span>Architectural Design Studio</span></div>
+    <h1>Modern Architectural Design</h1>
+    <p>
+      Residential, commercial, and conceptual architecture
+      focused on clarity, proportion, and future-ready spaces.
+    </p>
+    <div class="hero-actions">
+      <button class="primary">View Projects</button>
+      <button class="secondary">Free Consultation</button>
+    </div>
   </div>
 
   <div class="hero-3d">
-    <canvas id="three-canvas"></canvas>
+    <iframe
+      src="https://my.spline.design/untitled-jymFH0NkmQEzs6wXXtalNO99/"
+      allow="autoplay; fullscreen"
+      loading="lazy">
+    </iframe>
   </div>
 </section>
 
-<!-- SERVICES -->
-<section class="products grid">
-  <div class="card">
-    <h3>Residential Design</h3>
-    <p>Modern homes, villas, and apartments</p>
-  </div>
+<!-- PERSONAL -->
+<section class="personal-hero">
+  <div class="personal-inner">
 
-  <div class="card">
-    <h3>Commercial Spaces</h3>
-    <p>Offices, retail, and mixed-use buildings</p>
-  </div>
+    <div class="personal-image">
+      <img src="your-image.png" alt="Christian Oliver Abejo">
+    </div>
 
-  <div class="card">
-    <h3>3D Visualization</h3>
-    <p>Concept models, renders, and walkthroughs</p>
+    <div class="personal-text">
+      <div class="stars">★★★★★</div>
+      <h2>
+        I'M <span>CHRISTIAN OLIVER </span>,<br>
+        YOUR ARCHITECTURAL DESIGNER.
+      </h2>
+      <p>
+        Specialized in modern architectural design, 3D visualization,
+        and build-ready concepts for residential and commercial projects.
+      </p>
+      <div class="personal-actions">
+        <button class="primary">More About Me</button>
+        <button class="secondary">View Projects</button>
+      </div>
+    </div>
+
   </div>
 </section>
 
-<!-- ABOUT -->
-<section class="about grid">
-  <div class="about-text">
-    <h2>Design Philosophy</h2>
-    <p>
-      C.O designs is an architectural studio focused on clarity,
-      efficiency, and expressive modern forms. Each project is
-      approached as a system of structure, light, and material.
-    </p>
-  </div>
+<!-- PROCESS -->
+<section class="process">
+  <div class="process-inner">
 
-  <div class="about-cards">
-    <div class="about-card">
-      <h3>Concept</h3>
-      <p>Strong ideas translated into buildable form</p>
+    <div class="process-text">
+      <h2>How I Do My Work</h2>
+      <p>
+        A structured, collaborative process ensuring clarity,
+        efficiency, and build-ready architectural solutions.
+      </p>
+      <button class="primary">Contact Me</button>
     </div>
-    <div class="about-card">
-      <h3>Detail</h3>
-      <p>Minimal geometry, material honesty</p>
+
+    <div class="process-grid">
+      <div class="process-card"><span>01</span><h3>Initial Meeting</h3></div>
+      <div class="process-card"><span>02</span><h3>Agreement & Planning</h3></div>
+      <div class="process-card"><span>03</span><h3>Design Development</h3></div>
+      <div class="process-card"><span>04</span><h3>3D Visualization</h3></div>
+      <div class="process-card"><span>05</span><h3>Technical Documentation</h3></div>
+      <div class="process-card"><span>06</span><h3>Final Delivery</h3></div>
     </div>
-    <div class="about-card">
-      <h3>Future</h3>
-      <p>Sustainable, adaptable design systems</p>
-    </div>
+
   </div>
 </section>
 
 <!-- PROJECTS -->
-<section class="projects grid">
+<section id="projects" class="projects grid">
   <h2 class="section-title">Selected Works</h2>
-
   <div class="project"></div>
   <div class="project"></div>
   <div class="project wide"></div>
@@ -77,13 +111,12 @@
 
 <!-- FOOTER -->
 <footer class="footer">
-  <div class="grid">
-    <p>© 2020 C.O designs — Architectural Design Services</p>
+  <div class="footer-grid">
+    <p>© 2026 C.O designs</p>
     <p>Concept • Design • Visualization</p>
   </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-<script src="main.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
